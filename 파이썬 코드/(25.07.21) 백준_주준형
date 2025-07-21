@@ -1,0 +1,51 @@
+딥러닝 05, 06 조코딩 2장
+
+# 백준 2562번
+
+arr = []
+
+for i in range (9) :
+    num = int(input())
+    arr.append(num)
+
+max_num = max(arr)
+max_index = arr.index(max_num) + 1
+
+print(max_num)
+print(max_index)
+
+
+
+# 백준 10810번
+
+N, M = map(int, input().split())
+
+basket = [0] * (N + 1)
+for count in range(M) :
+    i, j, k = map(int, input().split())
+    
+    for index in range(i, j + 1) :
+        basket[index] = k
+
+for i in basket[1:N + 1] :
+    print(i, end = " ")
+
+
+
+# 백준 10813번
+
+# 클래스 생성
+class MyList(list) :
+    def swap(self, i, j) : # MyList.swap(basket, i ,j)
+        self[i], self[j] = self[j], self[i]
+
+N, M = map(int, input().split())
+
+basket = MyList(range(0, N + 1))
+
+for count in range(M) :
+    i, j = map(int, input().split())
+    basket.swap(i, j) # MyList.swap(basket, i ,j) 와 동일
+
+for value in basket[1 : N + 1] :
+    print(value, end = " ")
