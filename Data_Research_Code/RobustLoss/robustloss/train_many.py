@@ -326,7 +326,7 @@ def run_clean_vs_noise(
     반환: (histories, labels, df_results)
     """
 
-    from noise_types import NoiseConfig    # 타입 힌트용
+    from .noise_types import NoiseConfig    # 타입 힌트용
 
     # 1) CLEAN
     model_c, hist_c, score_c = run_experiment(
