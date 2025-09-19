@@ -22,7 +22,7 @@ scce_loss  = _lf.scce_loss
 
 # === Training ===
 run_experiment     = _tm.run_experiment
-run_clean_vs_noise = getattr(_tm, "run_clean_vs_noise", None)
+run_clean_vs_noise = _tm.run_clean_vs_noise
 plot_history       = _tm.plot_history
 suggest_hparams    = getattr(_tm, "suggest_hparams", None)
 
@@ -33,6 +33,9 @@ TaskType      = _sch.TaskType
 # === Models / Noise ===
 build_model = _mdl.build_model
 NoiseConfig = (_nt.NoiseConfig if _nt else None)
+
+# === Clean / Noise Compare ===
+pct_drop = _tm.pct_drop
 
 __all__ = [
     "make_loss","ce_loss","gce_loss","focal_loss","cce_loss","scce_loss",
