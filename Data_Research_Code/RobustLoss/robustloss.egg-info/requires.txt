@@ -1,0 +1,10 @@
+numpy>=1.23
+pandas>=2.0
+scikit-learn>=1.2
+matplotlib>=3.7
+
+[dev]
+pytest
+ruff
+build
+twine
