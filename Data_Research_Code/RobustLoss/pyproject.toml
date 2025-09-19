@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "robustloss"
+version = "0.1.0"
+description = "Robust classification losses (CCE/SCCE, Focal, GCE) + simple experiment runner"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{ name = "RosePasta22", email = "danieljoo04@gmail.com" }]
+keywords = ["robust", "loss", "noisy labels", "outliers", "ml", "pytorch"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+dependencies = [
+  "numpy>=1.23",
+  "pandas>=2.0",
+  "scikit-learn>=1.2",
+  "matplotlib>=3.7",
+  # torch는 CUDA/CPU 빌드 이슈 때문에 README에서 별도 설치 안내 권장
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "build", "twine"]
+
+[project.urls]
+Homepage = "https://github.com/RosePasta22/ML-DL-Seminar"
+Issues   = "https://github.com/RosePasta22/ML-DL-Seminar/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["robustloss*"]
