@@ -16,8 +16,5 @@ pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.0.4#subdirector
 pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@main#subdirectory=Data_Research_Code/RobustLoss"
 ```
 ```python
-pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@<commitSHA>#subdirectory=Data_Research_Code/RobustLoss"
-```
-```python
-pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.0.3/robustloss-2.0.3-py3-none-any.whl"
+pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.0.3/robustloss-2.0.4-py3-none-any.whl"
 ```
