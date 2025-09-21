@@ -56,9 +56,9 @@ from robustloss import run_experiment, plot_history, run_clean_vs_noise, pct_dro
 from robustloss import NoiseConfig
 ```
 
-## important prototypes
+# important prototypes
 
-**DatasetSchema**
+## **DatasetSchema**
 ```python
 schema = DatasetSchema(
     name: str
@@ -70,7 +70,7 @@ schema = DatasetSchema(
 )
 ```
 
-** 예시 **
+### **예시**
 ```python
 schema = DatasetSchema(
     name="uci_wine",
@@ -79,7 +79,7 @@ schema = DatasetSchema(
 )
 ```
 
-**NoiseConfig**
+## **NoiseConfig**
 ```python
 
 NoiseConfig:
@@ -102,7 +102,7 @@ NoiseConfig:
     spike_value: float = 10.0                  # Spike 값 (outlier 크기)
 ```
 
-**run_experiment**
+## **run_experiment**
 
 ```python
 run_experiment(
@@ -136,7 +136,7 @@ run_experiment(
 ):
 ```
 
-**run_clean_vs_noise**
+## **run_clean_vs_noise**
 
 ```python
 run_clean_vs_noise(
