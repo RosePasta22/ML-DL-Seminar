@@ -170,10 +170,10 @@ run_clean_vs_noise(
 ```
 
 # Patch Note
-* 1.0.0 최초 릴리즈
-* 1.0.1 로그 수정
-* 2.0.0 라이브러리 모듈화, 노이즈 추가 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.0)
-* 2.0.1 버그 수정
-* 2.0.2 버그 수정
-* 2.0.3 버그 수정
-* 2.0.4 버그 수정 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.4)
+* 1.0.0 : 최초 릴리즈
+* 1.0.1 : 로그 수정
+* 2.0.0 : 라이브러리 모듈화, 노이즈 추가 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.0)
+* 2.0.1 : 버그 수정
+* 2.0.2 : 버그 수정
+* 2.0.3 : 버그 수정
+* 2.0.4 : 버그 수정 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.4)
