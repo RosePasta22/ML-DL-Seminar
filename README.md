@@ -33,7 +33,7 @@
 * train_many.py
 
   
-# ** How to use**
+# **How to use**
 
 ## install
 ```python
