@@ -33,9 +33,9 @@
 * train_many.py
 
   
-## How to use
+# How to use
 
-### install
+## install
 ```python
 pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.0.4#subdirectory=Data_Research_Code/RobustLoss"
 ```
@@ -48,7 +48,7 @@ pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@main#subdirectory=
 ```python
 pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.0.3/robustloss-2.0.4-py3-none-any.whl"
 ```
-### import
+## import
 ```python
 from robustloss import DatasetSchema, TaskType
 from robustloss import make_loss
@@ -56,7 +56,7 @@ from robustloss import run_experiment, plot_history, run_clean_vs_noise, pct_dro
 from robustloss import NoiseConfig
 ```
 
-### important prototypes
+## important prototypes
 
 **DatasetSchema**
 ```python
