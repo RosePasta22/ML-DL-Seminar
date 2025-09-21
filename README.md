@@ -56,6 +56,113 @@ from robustloss import run_experiment, plot_history, run_clean_vs_noise, pct_dro
 from robustloss import NoiseConfig
 ```
 
-### process
+### important prototypes
 
+**DatasetSchema**
+```python
+schema = DatasetSchema(
+    name: str
+    target_name: str
+    task_type: Optional[TaskType] = None       # Task_Type.BINARY / Task_Type.MULTICLASS  None일 시 전처리 시 자동감지 
+    numeric_features: Optional[Sequence[str]] = None
+    categorical_features: Optional[Sequence[str]] = None
+    drop_features: Sequence[str] = field(default_factory=tuple)
+)
+```
 
+** 예시 **
+```python
+schema = DatasetSchema(
+    name="uci_wine",
+    target_name="class",
+    task_type=TaskType.MULTICLASS
+)
+```
+
+**NoiseConfig**
+```python
+
+NoiseConfig:
+    kind: Literal["none", "label", "feature", "both"] = "none"
+
+    # --- Label Noise ---
+    label_mode: Optional[LabelMode] = None     # 노이즈 종류 ["symmetric", "pairflip", "classdep", "instancedep"]
+    label_rate: float = 0.0                    # 노이즈율 η
+    seed_label: Optional[int] = None           # 라벨 노이즈 랜덤 시드
+    pairflip_pairs: Optional[Dict[int, int]] = None  # pairflip용 클래스 쌍
+    classdep_etas: Optional[np.ndarray] = None       # class-dependent 노이즈율 벡터
+    instancedep_tau: float = 1.0                     # instance-dependent scaling factor
+
+    # --- Feature Noise ---
+    feature_mode: Optional[FeatureMode] = None # 노이즈 종류 ["gaussian", "spike"]
+    seed_feature: Optional[int] = None         # 피처 노이즈 랜덤 시드
+    feature_frac: float = 0.0                  # 전체 샘플 중 노이즈 적용 비율
+    feature_scale: float = 0.0                 # Gaussian scale (std 비율)
+    spike_frac: float = 0.0                    # Spike 적용 비율
+    spike_value: float = 10.0                  # Spike 값 (outlier 크기)
+```
+
+**run_experiment**
+
+```python
+run_experiment(
+    df,                                        # Dataframe
+    schema_or_name: Union[str, DatasetSchema], # DatasetSchema 객체 또는 registry.py 의 str
+    loss_fn,                       # 사용할 손실 함수 (예: CE, GCE, CCE 등)
+
+    # -------------------------
+    # 학습 하이퍼파라미터 (기본 프리셋)
+    # -------------------------
+    epochs: int = 50,              # 최대 학습 epoch 수
+    batch_size: int = 64,          # 미니배치 크기
+    lr: float = 1e-3,              # 학습률 (learning rate)
+    weight_decay: float = 1e-4,    # L2 정규화 강도 (weight decay)
+
+    optimizer_name: str = "adam",  # 옵티마이저 종류 ("adam" | "sgd" | "sgd_momentum")
+    loss_name: str = "loss",       # 손실 함수 이름 (로그 출력/플롯 라벨링용)
+    patience: int = 10,            # Early Stopping patience (val_loss 개선 없을 시 중단)
+
+    # -------------------------
+    # 실행 환경
+    # -------------------------
+    seed: int = 42,                # 랜덤 시드 (재현성 보장)
+    device: str | None = None,     # 연산 장치 지정 ("cuda", "cpu", None이면 자동)
+
+    # -------------------------
+    # noise setting
+    # -------------------------
+    noise: Optional[NoiseConfig] = None,     # 노이즈 구성 객체 (label/feature 종류, 비율, 시드 등)
+    noise_targets: Iterable[str] = ("train",),  # 노이즈 적용 대상 split ("train","val","test" 중 선택)
+):
+```
+
+**run_clean_vs_noise**
+
+```python
+run_clean_vs_noise(
+    df,                            # Dataframe
+    schema_or_name,                # DatasetSchema 객체 또는 registry.py 의 str
+    *,
+    loss_fn,                       # 사용할 손실 함수 (예: CE, GCE, CCE 등)
+    loss_name: str = "loss",       # 손실 함수 이름 (로그 출력/플롯 라벨링용)
+    seed: int = 42,                # 랜덤 시드 (재현성 보장)
+
+    # -------------------------
+    # 학습 하이퍼파라미터 (기본 프리셋)
+    # -------------------------
+    epochs: int = 50,              # 최대 학습 epoch 수
+    batch_size: int = 64,          # 미니배치 크기
+    lr: float = 1e-3,              # 학습률 (learning rate)
+    weight_decay: float = 1e-4,    # L2 정규화 강도 (weight decay)
+
+    optimizer_name: str = "adam",  # 옵티마이저 종류 ("adam" | "sgd" | "sgd_momentum")
+    patience: int = 10,            # Early Stopping patience (val_loss 개선 없을 시 중단)
+    device: str | None = None,
+
+    # -------------------------
+    # noise setting
+    # -------------------------
+    noise_cfg: Optional["NoiseConfig"] = None,
+    noise_targets: Iterable[str] = ("train",),
+):
+```
