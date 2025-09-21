@@ -176,4 +176,4 @@ run_clean_vs_noise(
 * 2.0.1 버그 수정
 * 2.0.2 버그 수정
 * 2.0.3 버그 수정
-* 2.0.4 버그 수정 (패치내역)(https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.4)
+* 2.0.4 버그 수정 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.4)
