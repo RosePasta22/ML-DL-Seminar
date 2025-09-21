@@ -4,6 +4,8 @@
 
 데이터 분석에 필요한 스키마 지정, 전처리, 함수 구현, 노이즈 관리, 학습 라이브러리입니다.
 
+### 내부 파일
+
 **1. 데이터 스키마 관리**
 
  * schemas.py
@@ -33,7 +35,7 @@
   
 ## How to use
 
-### import
+### install
 ```python
 pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.0.4#subdirectory=Data_Research_Code/RobustLoss"
 ```
@@ -46,4 +48,14 @@ pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@main#subdirectory=
 ```python
 pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.0.3/robustloss-2.0.4-py3-none-any.whl"
 ```
+### import
+```python
+from robustloss import DatasetSchema, TaskType
+from robustloss import make_loss
+from robustloss import run_experiment, plot_history, run_clean_vs_noise, pct_drop
+from robustloss import NoiseConfig
+```
+
+### process
+
 
