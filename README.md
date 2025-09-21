@@ -60,7 +60,7 @@ from robustloss import NoiseConfig
 
 ## **DatasetSchema**
 ```python
-schema = DatasetSchema(
+DatasetSchema(
     name: str
     target_name: str
     task_type: Optional[TaskType] = None       # Task_Type.BINARY / Task_Type.MULTICLASS  None일 시 전처리 시 자동감지 
