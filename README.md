@@ -33,7 +33,7 @@
 * train_many.py
 
   
-# How to use
+**# How to use**
 
 ## install
 ```python
@@ -56,7 +56,7 @@ from robustloss import run_experiment, plot_history, run_clean_vs_noise, pct_dro
 from robustloss import NoiseConfig
 ```
 
-# important prototypes
+**# Important prototypes**
 
 ## **DatasetSchema**
 ```python
