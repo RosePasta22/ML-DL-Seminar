@@ -28,7 +28,12 @@
 * noise_types.py
 * apply_noise.py
 
-**6. 학습 루프, optimizer, early stopping, 시각화**
+**6. Outlier 관리**
+
+* outliers.py
+* apply_outlier.py
+  
+**7. 학습 루프, optimizer, early stopping, 시각화**
 
 * train_many.py
 
@@ -50,6 +55,7 @@ pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@main#subdirectory=
 ```python
 pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.0.3/robustloss-2.0.4-py3-none-any.whl"
 ```
+
 ## import
 ```python
 from robustloss import DatasetSchema, TaskType
@@ -80,6 +86,8 @@ schema = DatasetSchema(
     task_type=TaskType.MULTICLASS
 )
 ```
+
+### **Setting**
 
 ## **NoiseConfig**
 ```python
