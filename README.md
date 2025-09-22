@@ -72,7 +72,8 @@ from robustloss import NoiseConfig
 
 ## **DatasetSchema**
 ```python
-DatasetSchema(
+@dataclass(frozen=True, slots=True)
+class DatasetSchema(
     name: str
     target_name: str
     task_type: Optional[TaskType] = None       # Task_Type.BINARY / Task_Type.MULTICLASS  None일 시 전처리 시 자동감지 
@@ -93,8 +94,8 @@ schema = DatasetSchema(
 
 ## **NoiseConfig**
 ```python
-
-NoiseConfig:
+@dataclass(slots=True)
+class NoiseConfig:
     kind: Literal["none", "label", "feature", "both"] = "none"
 
     # --- Label Noise ---
@@ -117,7 +118,8 @@ NoiseConfig:
 ## **OutlierConfig**
 
 ```python
-OutlierConfig:
+@dataclass(frozen=True, slots=True)
+class OutlierConfig:
     spike_value: float = 10.0                  #
     rate: float = 0.1                          # outlier 비율 (0.1=10%)
     zmin: float = 3.0                          # z-score 하한 (3σ)
