@@ -299,7 +299,7 @@ def run_experiment(
             df_tr = _xy_to_df(Xtr, ytr, schema)
             df_tr_aug, out_tr = apply_outliers(df_tr, schema, outliers, cols=None, meta=True)
             Xtr, ytr = _df_to_xy(df_tr_aug, schema)
-            outlier_meta["train"] = _summarize_outliers(out_tr, outliers)
+            outlier_meta["train"] = _summarize_outliers(out_tr, outliers)  # ★ z_avg, z_std 포함된 요약 딕셔너리
 
         # val
         if "val" in targets:
@@ -482,7 +482,7 @@ def run_clean_vs_outlier(
     def _flatten_outlier_meta(meta: Dict[str, Any] | None) -> Dict[str, Any]:
         """
         outlier_meta( split별 요약 ) → CSV 친화적 평탄화
-        키 예: out_train_n_added, out_train_m_avg, out_train_zmin, ...
+        키 예: out_train_n_added, out_train_z_avg, out_train_z_std, ...
         """
         d: Dict[str, Any] = {}
         for split in ("train", "val", "test"):
@@ -490,10 +490,19 @@ def run_clean_vs_outlier(
             d[f"out_{split}_n_added"] = (m.get("n_added") if m else 0)
             d[f"out_{split}_rate"]    = (m.get("rate") if m else 0.0)
             d[f"out_{split}_m_avg"]   = (m.get("m_avg") if m else 0.0)
+            d[f"out_{split}_m_min"]   = (m.get("m_min") if m else 0)
+            d[f"out_{split}_m_max"]   = (m.get("m_max") if m else 0)
             if m:
+                # 기존: zmin, zmax, two_side
                 d[f"out_{split}_zmin"]     = m.get("zmin")
                 d[f"out_{split}_zmax"]     = m.get("zmax")
                 d[f"out_{split}_two_side"] = m.get("two_side")
+
+                # ★ 추가: outliers.py에서 계산된 실제 z 통계
+                d[f"out_{split}_z_avg"] = m.get("z_avg")
+                d[f"out_{split}_z_std"] = m.get("z_std")
+                d[f"out_{split}_z_min"] = m.get("z_min")
+                d[f"out_{split}_z_max"] = m.get("z_max")
         return d
 
     rows = []

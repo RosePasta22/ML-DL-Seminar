@@ -50,11 +50,6 @@ NoiseConfig = (_nt.NoiseConfig if _nt else None)
 OutlierConfig      = (_ol.OutlierConfig if _ol else None)
 apply_outliers     = (_ao.apply_outliers if _ao else None)
 
-# 편의를 위한 파이프라인 유틸
-xy_to_df           = getattr(_ao, "_xy_to_df", None)
-df_to_xy           = getattr(_ao, "_df_to_xy", None)
-summarize_outliers = getattr(_ao, "_summarize_outliers", None)
-
 # === Clean / Modified_Data Compare ===
 pct_drop = _tm.pct_drop
 

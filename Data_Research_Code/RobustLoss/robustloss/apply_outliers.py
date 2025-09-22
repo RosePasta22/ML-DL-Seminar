@@ -71,7 +71,14 @@ def _df_to_xy(df: pd.DataFrame, schema: DatasetSchema) -> Tuple[np.ndarray, np.n
     - outlier 메타 열은 학습 입력에 섞이면 안 되므로 자동 드롭
     - 드롭 대상: "_is_outlier", "_cols_outlier", "_zscore_outlier", "_zrange"
     """
-    drop_meta = [c for c in ["_is_outlier", "_cols_outlier", "_zscore_outlier", "_zrange"] if c in df.columns]
+
+    drop_meta_candidates = [
+    "_is_outlier", "_cols_outlier", "_zscore_outlier", "_zrange",
+    "_m_changed", "_z_avg", "_z_std", "_z_min", "_z_max",
+    "_m_avg", "_m_min", "_m_max"
+    ]
+    drop_meta = [c for c in drop_meta_candidates if c in df.columns]
+
     if drop_meta:
         df = df.drop(columns=drop_meta)
     X = df.drop(columns=[schema.target_name]).to_numpy()
@@ -81,7 +88,7 @@ def _df_to_xy(df: pd.DataFrame, schema: DatasetSchema) -> Tuple[np.ndarray, np.n
 
 def _summarize_outliers(out_only_df: pd.DataFrame, config: "OutlierConfig") -> Dict[str, Any] | None:
     """
-    outlier 행 요약치(개수, m 통계, z 범위 등)를 dict로 반환.
+    outlier 행 요약치(개수, m 통계, z 통계 등)를 dict로 반환.
     - 입력: out_only_df (apply_outliers → 반환된 outlier 전용 DF)
     - 출력 예:
         {
@@ -90,6 +97,10 @@ def _summarize_outliers(out_only_df: pd.DataFrame, config: "OutlierConfig") -> D
           "m_avg": 2.7,
           "m_min": 1,
           "m_max": 5,
+          "z_avg": 3.95,
+          "z_std": 0.52,
+          "z_min": 3.01,
+          "z_max": 4.98,
           "zmin": 3.0,
           "zmax": 5.0,
           "two_side": True,
@@ -101,20 +112,15 @@ def _summarize_outliers(out_only_df: pd.DataFrame, config: "OutlierConfig") -> D
 
     n_added = int(len(out_only_df))
 
-    # 한 행에서 변조된 feature 개수 m = len(_cols_outlier.split(","))
-    if "_cols_outlier" in out_only_df.columns:
-        m_list = (
-            out_only_df["_cols_outlier"]
-            .astype(str)
-            .apply(lambda s: 0 if s == "" else len(s.split(",")))
-            .tolist()
-        )
-    else:
-        m_list = []
+    # outliers.py에서 이미 붙여둔 summary 메타 열 활용
+    z_avg = float(out_only_df["_z_avg"].iloc[0]) if "_z_avg" in out_only_df else None
+    z_std = float(out_only_df["_z_std"].iloc[0]) if "_z_std" in out_only_df else None
+    z_min = float(out_only_df["_z_min"].iloc[0]) if "_z_min" in out_only_df else None
+    z_max = float(out_only_df["_z_max"].iloc[0]) if "_z_max" in out_only_df else None
 
-    m_avg = float(np.mean(m_list)) if m_list else 0.0
-    m_min = int(np.min(m_list)) if m_list else 0
-    m_max = int(np.max(m_list)) if m_list else 0
+    m_avg = float(out_only_df["_m_avg"].iloc[0]) if "_m_avg" in out_only_df else None
+    m_min = int(out_only_df["_m_min"].iloc[0]) if "_m_min" in out_only_df else None
+    m_max = int(out_only_df["_m_max"].iloc[0]) if "_m_max" in out_only_df else None
 
     return {
         "n_added": n_added,
@@ -122,6 +128,10 @@ def _summarize_outliers(out_only_df: pd.DataFrame, config: "OutlierConfig") -> D
         "m_avg": m_avg,
         "m_min": m_min,
         "m_max": m_max,
+        "z_avg": z_avg,
+        "z_std": z_std,
+        "z_min": z_min,
+        "z_max": z_max,
         "zmin": float(config.zmin),
         "zmax": float(config.zmax),
         "two_side": bool(config.two_side),
