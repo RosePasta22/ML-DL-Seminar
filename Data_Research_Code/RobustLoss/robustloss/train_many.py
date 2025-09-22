@@ -157,10 +157,10 @@ def train(
 
     return history
 
-# clean 대비 noise의 상대적 하락(%)
-def pct_drop(a_clean, a_noise):
+# clean 대비 상대적 하락(%)
+def pct_drop(a_clean, a_modified_data):
     if a_clean == 0: return 0.0
-    return (a_clean - a_noise) / a_clean * 100.0
+    return (a_clean - a_modified_data) / a_clean * 100.0
 
 # -------------------
 # 그래프 유틸
