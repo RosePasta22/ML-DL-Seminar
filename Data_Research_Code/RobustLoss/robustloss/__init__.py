@@ -46,7 +46,7 @@ build_model = _mdl.build_model
 # === Noise ===
 NoiseConfig = (_nt.NoiseConfig if _nt else None)
 
-# === Outliers 공개 심볼 ===
+# === Outliers ===
 OutlierConfig      = (_ol.OutlierConfig if _ol else None)
 apply_outliers     = (_ao.apply_outliers if _ao else None)
 
@@ -59,9 +59,9 @@ __all__ = [
     # training
     "run_experiment","run_clean_vs_noise","run_clean_vs_outlier","plot_history","suggest_hparams",
     # schema / model
-    "DatasetSchema","TaskType","build_model","NoiseConfig", "OutlierConfig"
+    "DatasetSchema","TaskType","build_model","NoiseConfig", "OutlierConfig",
     # utils
     "pct_drop",
     # outliers
-    "apply_outliers","xy_to_df","df_to_xy","summarize_outliers",
+    "OutlierConfig", "apply_outliers",
 ]
