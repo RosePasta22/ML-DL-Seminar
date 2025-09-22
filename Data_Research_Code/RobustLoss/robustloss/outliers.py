@@ -98,7 +98,7 @@ def make_outliers(
         vals = mu[sel] + z_signed * sigma[sel]                            # x = μ + z * σ
 
         # 실제 값 치환
-        row = out.iloc[i]
+        row = out.iloc[i].copy()
         for j, v in zip(sel, vals):
             row[cols[j]] = v
         out.iloc[i] = row
