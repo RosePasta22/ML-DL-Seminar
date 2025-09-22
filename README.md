@@ -66,6 +66,8 @@ from robustloss import NoiseConfig
 
 # **Important prototypes**
 
+# **Setting**
+
 ## **DatasetSchema**
 ```python
 DatasetSchema(
@@ -86,8 +88,6 @@ schema = DatasetSchema(
     task_type=TaskType.MULTICLASS
 )
 ```
-
-### **Setting**
 
 ## **NoiseConfig**
 ```python
@@ -110,6 +110,21 @@ NoiseConfig:
     feature_scale: float = 0.0                 # Gaussian scale (std 비율)
     spike_frac: float = 0.0                    # Spike 적용 비율
     spike_value: float = 10.0                  # Spike 값 (outlier 크기)
+```
+
+## **OutlierConfig**
+
+```python
+OutlierConfig:
+    spike_value: float = 10.0                  #
+    rate: float = 0.1                          # outlier 비율 (0.1=10%)
+    zmin: float = 3.0                          # z-score 하한 (3σ)
+    zmax: float = 5.0                          # z-score 상한 (5σ)
+    mmin: int = 1                              # 한 행에서 변조할 feature 최소 개수
+    mmax: Optional[int] = None                 # 한 행에서 변조할 feature 최대 개수 (None=전체)
+    two_side: bool = True                      # True: ±, False: +만
+    seed_outlier: Optional[int] = 42           # Outlier 시드
+    target: Iterable[str] = ("train",)         # 주입할 split ("train","val","test")
 ```
 
 ## **run_experiment**
