@@ -164,6 +164,58 @@ return model, hist, dict(test_acc=test_acc, test_f1=test_f1, noise_meta=noise_me
 
 ```
 
+## **noise_meta**
+
+```python
+noise_meta: Dict[str, Any] = {
+    "train": {   # train split에 노이즈 적용 시
+        "kind": "label" | "feature" | "both",   # 적용된 노이즈 종류
+        # --- Label Noise ---
+        "label_mode": "symmetric" | "pairflip" | "classdep" | "instancedep",
+        "label_rate": float,        # 노이즈율 η
+        "seed_label": int,          # 라벨 노이즈 시드
+        "label_idx": np.ndarray,    # 변경된 샘플 인덱스
+        "label_orig": np.ndarray,   # 변경 전 라벨
+        "transition": np.ndarray,   # 전이행렬 (pairflip/classdep 모드에서 사용)
+
+        # --- Feature Noise ---
+        "feature_mode": "gaussian" | "spike",
+        "seed_feature": int,        # 피처 노이즈 시드
+        "feature_idx": np.ndarray,  # 노이즈가 적용된 샘플 인덱스
+    },
+    "val": None | {...},   # val split에도 적용된 경우
+    "test": None | {...},  # test split에도 적용된 경우
+}
+```
+
+## **outlier_meta**
+
+```python
+outlier_meta: Dict[str, Any] = {
+    "train": {   # train split에 outlier 적용 시
+        "n_added": int,         # 추가된 outlier 행 개수
+        "rate": float,          # 전체 샘플 대비 outlier 비율
+        "m_avg": float,         # 한 행에서 변조된 feature 수 평균
+        "m_min": int,           # 변조된 feature 수 최소
+        "m_max": int,           # 변조된 feature 수 최대
+
+        # --- Z-score 요약 (절대값 기준) ---
+        "z_avg": float,         # 모든 outlier feature |z| 평균
+        "z_std": float,         # 모든 outlier feature |z| 표준편차
+        "z_min": float,         # 관측된 |z| 최소값
+        "z_max": float,         # 관측된 |z| 최대값
+
+        # --- Config 기록 ---
+        "zmin": float,          # 설정된 z-score 하한
+        "zmax": float,          # 설정된 z-score 상한
+        "two_side": bool,       # ± 방향 허용 여부
+        "seed_outlier": int,    # outlier 생성 시드
+    },
+    "val": None | {...},   # val split에도 적용된 경우
+    "test": None | {...},  # test split에도 적용된 경우
+}
+```
+
 ## **run_clean_vs_noise**
 
 ```python
