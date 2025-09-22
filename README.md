@@ -44,18 +44,18 @@
 
 ## install
 
-[Latest Release](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.2)
+[Latest Release](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.3)
 ```python
-pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.2#subdirectory=Data_Research_Code/RobustLoss"
+pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.3#subdirectory=Data_Research_Code/RobustLoss"
 ```
 ```python
-pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.2#subdirectory=Data_Research_Code/RobustLoss"
+pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.3#subdirectory=Data_Research_Code/RobustLoss"
 ```
 ```python
 pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@main#subdirectory=Data_Research_Code/RobustLoss"
 ```
 ```python
-pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.1.2/robustloss-2.1.2-py3-none-any.whl"
+pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.1.3/robustloss-2.1.3-py3-none-any.whl"
 ```
 
 ## import
