@@ -192,6 +192,42 @@ run_clean_vs_noise(
 ):
 ```
 
+## **run_clean_vs_outlier
+
+```python
+run_clean_vs_outlier(
+    df,                               # 전체 데이터셋 (pandas DataFrame)
+    schema_or_name,                   # DatasetSchema 객체 또는 str (등록된 스키마 이름)
+
+    *,
+    loss_fn,                          # 사용할 손실 함수 (callable, 예: ce_loss, gce_loss 등)
+    loss_name: str = "loss",          # 손실 함수 이름 (로그/라벨링용 표시)
+
+    seed: int = 42,                   # 랜덤 시드 (데이터 분할/학습 재현성 보장)
+
+    # -------------------------
+    # 학습 하이퍼파라미터
+    # -------------------------
+    epochs: int = 50,                 # 최대 학습 epoch 수
+    batch_size: int = 64,             # 미니배치 크기
+    lr: float = 1e-3,                 # 학습률 (learning rate)
+    weight_decay: float = 1e-4,       # L2 정규화 강도 (weight decay)
+
+    optimizer_name: str = "adam",     # 옵티마이저 종류 ("adam" | "sgd" | "sgd_momentum")
+    patience: int = 10,               # Early Stopping patience (val_loss 개선 없을 시 중단)
+
+    # -------------------------
+    # 실행 환경
+    # -------------------------
+    device: str | None = None,        # 연산 장치 ("cuda", "cpu", None → 자동 감지)
+
+    # -------------------------
+    # 아웃라이어 설정
+    # -------------------------
+    outlier_cfg: Optional[OutlierConfig] = None,  # OutlierConfig 객체 (rate, z 범위, m 범위 등 설정)
+):
+```
+
 # Patch Note
 * 1.0.0 : 최초 릴리즈
 * 1.0.1 : 로그 수정
