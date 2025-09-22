@@ -159,6 +159,9 @@ run_experiment(
     noise: Optional[NoiseConfig] = None,        # 노이즈 구성 객체 (label/feature 종류, 비율, 시드 등)
     noise_targets: Iterable[str] = ("train",),  # 노이즈 적용 대상 split ("train","val","test" 중 선택)
 ):
+
+return model, hist, dict(test_acc=test_acc, test_f1=test_f1, noise_meta=noise_meta, outlier_meta=outlier_meta)
+
 ```
 
 ## **run_clean_vs_noise**
@@ -190,6 +193,9 @@ run_clean_vs_noise(
     noise_cfg: Optional["NoiseConfig"] = None,
     noise_targets: Iterable[str] = ("train",),
 ):
+
+return ( [hist_c, hist_n], ["CLEAN", "NOISE"], df_results )
+
 ```
 
 ## **run_clean_vs_outlier
@@ -226,6 +232,9 @@ run_clean_vs_outlier(
     # -------------------------
     outlier_cfg: Optional[OutlierConfig] = None,  # OutlierConfig 객체 (rate, z 범위, m 범위 등 설정)
 ):
+
+return ([hist_c, hist_o], ["CLEAN", "OUTLIER"], df_results)
+
 ```
 
 # Patch Note
