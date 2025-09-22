@@ -22,6 +22,11 @@ from .apply_noise import (
     apply_noise_to_selected_splits,
 )
 
+# Outliers
+from .outliers import OutlierConfig
+from .apply_outliers import apply_outliers, _xy_to_df, _df_to_xy, _summarize_outliers
+
+
 
 # -------------------
 # 재현성: 시드 고정
@@ -237,6 +242,11 @@ def run_experiment(
     # -------------------------
     noise: Optional[NoiseConfig] = None,     # 노이즈 구성 객체 (label/feature 종류, 비율, 시드 등)
     noise_targets: Iterable[str] = ("train",),  # 노이즈 적용 대상 split ("train","val","test" 중 선택)
+
+    # -------------------------
+    # outlier 설정
+    # -------------------------
+    outliers: Optional[OutlierConfig] = None,
 ):
 
     set_seed(seed)
@@ -250,6 +260,9 @@ def run_experiment(
         
     (Xtr, ytr), (Xval, yval), (Xte, yte), meta = prepare_dataset(df, schema, random_state=seed)
     
+    # -------------------------
+    # 노이즈 적용
+    # -------------------------
     K = int(meta["num_classes"])  # 또는 int(np.unique(ytr).size)
     noise_meta: Dict[str, Any] = {"train": None, "val": None, "test": None}
     
@@ -268,7 +281,40 @@ def run_experiment(
                 num_classes=K, config=noise, targets=targets
             )
             noise_meta = meta_all
+    # -----------------------------------------------
 
+    # -------------------------
+    # outliers 적용
+    # -------------------------
+    outlier_meta: Dict[str, Any] = {"train": None, "val": None, "test": None}
+    if outliers is not None:
+        targets = set(t.lower() for t in outliers.target)
+        allowed = {"train","val","test"}
+        invalid = targets - allowed
+        if invalid:
+            raise ValueError(f"outliers.target 잘못된 값: {invalid} (허용: {allowed})")
+
+        # train
+        if "train" in targets:
+            df_tr = _xy_to_df(Xtr, ytr, schema)
+            df_tr_aug, out_tr = apply_outliers(df_tr, schema, outliers, cols=None, meta=True)
+            Xtr, ytr = _df_to_xy(df_tr_aug, schema)
+            outlier_meta["train"] = _summarize_outliers(out_tr, outliers)
+
+        # val
+        if "val" in targets:
+            df_val = _xy_to_df(Xval, yval, schema)
+            df_val_aug, out_val = apply_outliers(df_val, schema, outliers, cols=None, meta=True)
+            Xval, yval = _df_to_xy(df_val_aug, schema)
+            outlier_meta["val"] = _summarize_outliers(out_val, outliers)
+
+        # test
+        if "test" in targets:
+            df_te = _xy_to_df(Xte, yte, schema)
+            df_te_aug, out_te = apply_outliers(df_te, schema, outliers, cols=None, meta=True)
+            Xte, yte = _df_to_xy(df_te_aug, schema)
+            outlier_meta["test"] = _summarize_outliers(out_te, outliers)
+    # -----------------------------------------------
 
     # 필요 시 자동 추천으로 덮어쓰기 예시:
     # auto = suggest_hparams(num_train=len(Xtr), dim=meta["n_features"])
@@ -299,7 +345,7 @@ def run_experiment(
         test_f1 = f1_score(y_true, y_pred, average="macro")
     
     print(f"\n{loss_name.upper()}\n [TEST] acc={test_acc:.4f}  f1_macro={test_f1:.4f}\n")
-    return model, hist, dict(test_acc=test_acc, test_f1=test_f1, noise_meta=noise_meta)
+    return model, hist, dict(test_acc=test_acc, test_f1=test_f1, noise_meta=noise_meta, outlier_meta=outlier_meta)
 
 # loss에 대해 clean vs noise
 def run_clean_vs_noise(
@@ -378,3 +424,92 @@ def run_clean_vs_noise(
     df_results = pd.DataFrame(rows)
 
     return ( [hist_c, hist_n], ["CLEAN", "NOISE"], df_results )
+
+# ===================
+# loss에 대해 clean vs outlier
+# ===================
+from typing import Optional, Iterable, Dict, Any
+from .outliers import OutlierConfig
+
+def run_clean_vs_outlier(
+    df,
+    schema_or_name,
+    *,
+    loss_fn,
+    loss_name: str = "loss",
+    seed: int = 42,
+    # 공통 하이퍼
+    epochs: int = 50,
+    batch_size: int = 64,
+    lr: float = 1e-3,
+    weight_decay: float = 1e-4,
+    optimizer_name: str = "adam",
+    patience: int = 10,
+    device: str | None = None,
+    # 아웃라이어 설정
+    outlier_cfg: Optional[OutlierConfig] = None,       # 주입할 설정(예: OutlierConfig(...))
+):
+    """
+    같은 분할/시드에서 clean과 outlier(지정한 outlier_cfg)를 공정 비교.
+    반환: (histories, labels, df_results)
+    """
+
+    # 1) CLEAN
+    model_c, hist_c, score_c = run_experiment(
+        df, schema_or_name,
+        loss_fn=loss_fn, loss_name=f"{loss_name} (CLEAN)",
+        epochs=epochs, batch_size=batch_size, lr=lr,
+        weight_decay=weight_decay, optimizer_name=optimizer_name,
+        patience=patience, seed=seed, device=device,
+        noise=None,                       # noise 없음
+        noise_targets=("train",),         # 무시됨
+        outliers=None,                    # ★ outlier 없음 (clean)
+    )
+
+    # 2) OUTLIER
+    model_o, hist_o, score_o = run_experiment(
+        df, schema_or_name,
+        loss_fn=loss_fn, loss_name=f"{loss_name} (OUTLIER)",
+        epochs=epochs, batch_size=batch_size, lr=lr,
+        weight_decay=weight_decay, optimizer_name=optimizer_name,
+        patience=patience, seed=seed, device=device,
+        noise=None,                       # 필요 시 noise 함께 비교하려면 바꿔도 됨
+        noise_targets=("train",),         # 필요 시 수정
+        outliers=outlier_cfg,             # ★ outlier 주입
+    )
+
+    # 3) 집계 표
+    def _flatten_outlier_meta(meta: Dict[str, Any] | None) -> Dict[str, Any]:
+        """
+        outlier_meta( split별 요약 ) → CSV 친화적 평탄화
+        키 예: out_train_n_added, out_train_m_avg, out_train_zmin, ...
+        """
+        d: Dict[str, Any] = {}
+        for split in ("train", "val", "test"):
+            m = (meta or {}).get(split)
+            d[f"out_{split}_n_added"] = (m.get("n_added") if m else 0)
+            d[f"out_{split}_rate"]    = (m.get("rate") if m else 0.0)
+            d[f"out_{split}_m_avg"]   = (m.get("m_avg") if m else 0.0)
+            if m:
+                d[f"out_{split}_zmin"]     = m.get("zmin")
+                d[f"out_{split}_zmax"]     = m.get("zmax")
+                d[f"out_{split}_two_side"] = m.get("two_side")
+        return d
+
+    rows = []
+    def _row(tag, score):
+        d = dict(
+            setting=tag,
+            test_acc=float(score["test_acc"]),
+            test_f1=float(score.get("test_f1", float("nan"))),
+        )
+        # outlier 메타(있다면) 일부 표시
+        if "outlier_meta" in score and isinstance(score["outlier_meta"], dict):
+            d.update(_flatten_outlier_meta(score["outlier_meta"]))
+        return d
+
+    rows.append(_row("CLEAN",   score_c))
+    rows.append(_row("OUTLIER", score_o))
+    df_results = pd.DataFrame(rows)
+
+    return ([hist_c, hist_o], ["CLEAN", "OUTLIER"], df_results)
