@@ -44,18 +44,18 @@
 
 ## install
 
-[Latest Release](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.3)
+[Latest Release](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.4)
 ```python
-pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.3#subdirectory=Data_Research_Code/RobustLoss"
+pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.4#subdirectory=Data_Research_Code/RobustLoss"
 ```
 ```python
-pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.3#subdirectory=Data_Research_Code/RobustLoss"
+pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@v2.1.4#subdirectory=Data_Research_Code/RobustLoss"
 ```
 ```python
 pip install "git+https://github.com/RosePasta22/ML-DL-Seminar@main#subdirectory=Data_Research_Code/RobustLoss"
 ```
 ```python
-pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.1.3/robustloss-2.1.3-py3-none-any.whl"
+pip install "https://github.com/RosePasta22/ML-DL-Seminar/releases/download/v2.1.4/robustloss-2.1.4-py3-none-any.whl"
 ```
 
 ## import
@@ -301,3 +301,8 @@ return ([hist_c, hist_o], ["CLEAN", "OUTLIER"], df_results)
 * 2.0.2 : 버그 수정
 * 2.0.3 : 버그 수정
 * 2.0.4 : 버그 수정 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.4)
+* 2.1.0 : Outliers 모듈 추가 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.0)
+* 2.1.1 : 얕은 복사로 인한 경고 해결 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.1)
+* 2.1.2 : Outlier 메타 추가 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.2)
+* 2.1.3 : init 수정 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.3)
+* 2.1.4 : SCCE 함수 clamp 1로 재정의, 구분을 위해 q_t로 변경 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.4)
