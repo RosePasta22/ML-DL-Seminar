@@ -42,14 +42,14 @@ def gce_loss(logits, targets, q: float = 0.7, reduction="mean", eps=1e-12):
     if reduction == "sum":  return loss.sum()
     return loss
 
-def cce_loss(logits, targets, eps: float = 1e-3, reduction="mean"):
+def cce_loss(logits, targets, eps: float = 1e-2, reduction="mean"):
     # 소프트맥스 확률
     probs = torch.softmax(logits, dim=1)
     # 정답 클래스 확률 p_t
-    pt = probs.gather(1, targets.unsqueeze(1)).squeeze(1)
+    qt = probs.gather(1, targets.unsqueeze(1)).squeeze(1)
     # epsilon 아래로 떨어지지 않도록 clamp
-    pt = torch.clamp(pt, min=eps)
-    loss = -torch.log(pt)
+    qt = torch.clamp(qt, min=eps)
+    loss = -torch.log(qt)
     if reduction == "mean":
         return loss.mean()
     elif reduction == "sum":
@@ -57,18 +57,18 @@ def cce_loss(logits, targets, eps: float = 1e-3, reduction="mean"):
     return loss
 
 
-def scce_loss(logits, targets, eps: float = 1e-3, reduction: str = "mean"):
+def scce_loss(logits, targets, eps: float = 1e-2, reduction: str = "mean"):
     # 소프트맥스 확률
     probs = F.softmax(logits, dim=1)                          # (N, C)
-    pt = probs.gather(1, targets.unsqueeze(1)).squeeze(1)     # (N,)
+    qt = probs.gather(1, targets.unsqueeze(1)).squeeze(1)     # (N,)
 
     eps_t = torch.as_tensor(eps, device=logits.device, dtype=logits.dtype)
 
-    # 원식: -log(pt + eps)
-    # 음수 손실( pt≈1 일 때 -log(1+eps) < 0 ) 방지를 위해 상한을 1-1e-8로 제한
-    pt_eps = torch.clamp(pt + eps_t, max=1.0 - 1e-8)
+    # 원식: -log(qt + eps)
+    # 음수 손실( qt≈1 일 때 -log(1+eps) < 0 ) 방지를 위해 상한을 1로 제한
+    qt_eps = torch.clamp(qt + eps_t, max=1.0)
 
-    loss = -torch.log(pt_eps)
+    loss = -torch.log(qt_eps)
 
     if reduction == "mean":
         return loss.mean()
