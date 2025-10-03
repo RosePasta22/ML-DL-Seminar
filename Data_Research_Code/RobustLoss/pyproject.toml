@@ -3,8 +3,8 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "robustloss"
-version = "2.1.4"
+name = "robustloss-lab"
+version = "2.1.5"
 description = "Robust classification losses (CCE/SCCE, Focal, GCE) + simple experiment runner"
 readme = "README.md"
 requires-python = ">=3.9"
