@@ -1,67 +1,133 @@
-# Data Research Code
+# robustloss-lab
 
-## Description
+Robust classification loss toolkit (CCE/SCCE, Focal, GCE) with simple experiment runners for noisy labels and outliers.  
+노이즈/아웃라이어 환경에서 강건한 분류 실험을 위한 손실 함수 라이브러리와 실험 러너를 제공합니다.
 
-데이터 분석에 필요한 스키마 지정, 전처리, 함수 구현, Outlier 및 Noise 관리, 학습 라이브러리입니다.
+---
 
-하 드디어 끝났다
+## ✨ Features
+- Losses: CE, GCE, Focal, **CCE**, **SCCE**
+- Experiment runners: `run_experiment`, `run_clean_vs_noise`, `run_clean_vs_outlier`
+- Noise / Outlier injection utilities and metadata logging
+- Minimal, sklearn-like workflow with PyTorch backend
 
-## 내부 파일
+---
 
-**1. 데이터 스키마 관리**
+## 📦 Install
 
- * schemas.py
+> **Note**: PyTorch는 CUDA/CPU 환경에 맞춰 별도 설치하세요.  
+> 예:  
+> ```bash
+> pip install torch --index-url https://download.pytorch.org/whl/cu121
+> ```
 
-**2. 데이터 전처리 및 split**
-
-* datamod.py
-* preprocess.py
-
-**3. 다양한 loss function 구현**
-
-* loss_functions.py
-
-**4. logistic/softmax 기반 linear classifier**
-
-* models.py
-
-**5. label/feature noise 관리**
-
-* noise_types.py
-* apply_noise.py
-
-**6. Outlier 관리**
-
-* outliers.py
-* apply_outlier.py
-  
-**7. 학습 루프, optimizer, early stopping, 시각화**
-
-* train_many.py
-
-  
-# **How to use**
-
-## install
-
-[Latest Release](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.5)
-```python
+```bash
 pip install robustloss-lab
 ```
 
-## import
+---
+
+## 🚀 Quick start
+
 ```python
-from robustloss import DatasetSchema, TaskType
-from robustloss import make_loss
-from robustloss import run_experiment, plot_history, run_clean_vs_noise, pct_drop
-from robustloss import NoiseConfig
+from robustloss import (
+    DatasetSchema, TaskType,
+    make_loss, run_experiment, plot_history,
+    NoiseConfig, OutlierConfig, pct_drop
+)
+
+# 1) Define dataset schema
+schema = DatasetSchema(
+    name="uci_wine",
+    target_name="class",
+    task_type=TaskType.MULTICLASS
+)
+
+# 2) Choose a loss (e.g., SCCE)
+loss_fn = make_loss("scce", eps=1e-3)
+
+# 3) Run a quick experiment
+model, hist, report = run_experiment(
+    df, schema,
+    loss_fn=loss_fn, loss_name="SCCE",
+    epochs=50, batch_size=64, lr=1e-3, weight_decay=1e-4,
+    optimizer_name="adam", seed=42
+)
+
+print(report)  # dict(test_acc=..., test_f1=..., noise_meta=..., outlier_meta=...)
+plot_history([hist], ["SCCE"])
 ```
 
-# **Important prototypes**
+---
 
-# **Setting**
+## 📂 Modules
 
-## **DatasetSchema**
+**Core (required submodules)**  
+- `schemas.py` — 데이터 스키마 정의  
+- `preprocess.py`, `datamod.py` — 전처리 / split  
+- `loss_functions.py` — CE, GCE, Focal, CCE, SCCE  
+- `models.py` — Logistic/Softmax linear classifiers  
+- `train_many.py` — 학습 루프, early stopping, 시각화  
+
+**Optional submodules**  
+- `noise_types.py`, `apply_noise.py` — 라벨/피처 노이즈  
+- `outliers.py`, `apply_outliers.py` — 아웃라이어 생성/주입  
+
+> 선택 모듈은 환경에 따라 미포함일 수 있으며, 패키지 import 시 `None`으로 바인딩될 수 있습니다.
+
+---
+
+## 📖 Data Research Code (Extended Notes)
+
+### Description
+데이터 분석에 필요한 스키마 지정, 전처리, 함수 구현, Outlier 및 Noise 관리, 학습 라이브러리입니다.
+
+### 내부 파일
+1) **데이터 스키마 관리**  
+- `schemas.py`
+
+2) **데이터 전처리 및 split**  
+- `datamod.py`, `preprocess.py`
+
+3) **다양한 loss function 구현**  
+- `loss_functions.py`
+
+4) **logistic/softmax 기반 linear classifier**  
+- `models.py`
+
+5) **label/feature noise 관리**  
+- `noise_types.py`, `apply_noise.py`
+
+6) **Outlier 관리**  
+- `outliers.py`, `apply_outliers.py`
+
+7) **학습 루프, optimizer, early stopping, 시각화**  
+- `train_many.py`
+
+---
+
+## 🧩 API Sketch (요약)
+
+### Experiment Runners
+```python
+model, hist, report = run_experiment(df, schema, loss_fn, ...)
+
+[h_c, h_n], labels, df_res = run_clean_vs_noise(df, schema, loss_fn=loss_fn, ...)
+
+[h_c, h_o], labels, df_res = run_clean_vs_outlier(df, schema, loss_fn=loss_fn, ...)
+```
+
+### Metadata
+- `noise_meta`: 라벨/피처 노이즈 적용 정보 (전이행렬, 인덱스, 시드 등)  
+- `outlier_meta`: 아웃라이어 주입 요약 (비율, |z|-통계, m범위/시드 등)
+
+---
+
+## 🧪 Important Prototypes
+
+### **Setting**
+
+#### **DatasetSchema**
 ```python
 @dataclass(frozen=True, slots=True)
 class DatasetSchema(
@@ -74,7 +140,7 @@ class DatasetSchema(
 )
 ```
 
-### **예시**
+##### **예시**
 ```python
 schema = DatasetSchema(
     name="uci_wine",
@@ -83,7 +149,7 @@ schema = DatasetSchema(
 )
 ```
 
-## **NoiseConfig**
+#### **NoiseConfig**
 ```python
 @dataclass(slots=True)
 class NoiseConfig:
@@ -106,8 +172,7 @@ class NoiseConfig:
     spike_value: float = 10.0                  # Spike 값 (outlier 크기)
 ```
 
-## **OutlierConfig**
-
+#### **OutlierConfig**
 ```python
 @dataclass(frozen=True, slots=True)
 class OutlierConfig:
@@ -122,8 +187,7 @@ class OutlierConfig:
     target: Iterable[str] = ("train",)         # 주입할 split ("train","val","test")
 ```
 
-## **run_experiment**
-
+#### **run_experiment**
 ```python
 run_experiment(
     df,                                        # Dataframe
@@ -159,8 +223,7 @@ return model, hist, dict(test_acc=test_acc, test_f1=test_f1, noise_meta=noise_me
 
 ```
 
-## **noise_meta**
-
+#### **noise_meta**
 ```python
 noise_meta: Dict[str, Any] = {
     "train": {   # train split에 노이즈 적용 시
@@ -183,8 +246,7 @@ noise_meta: Dict[str, Any] = {
 }
 ```
 
-## **outlier_meta**
-
+#### **outlier_meta**
 ```python
 outlier_meta: Dict[str, Any] = {
     "train": {   # train split에 outlier 적용 시
@@ -211,8 +273,7 @@ outlier_meta: Dict[str, Any] = {
 }
 ```
 
-## **run_clean_vs_noise**
-
+#### **run_clean_vs_noise**
 ```python
 run_clean_vs_noise(
     df,                            # Dataframe
@@ -245,8 +306,7 @@ return ( [hist_c, hist_n], ["CLEAN", "NOISE"], df_results )
 
 ```
 
-## **run_clean_vs_outlier
-
+#### **run_clean_vs_outlier**
 ```python
 run_clean_vs_outlier(
     df,                               # 전체 데이터셋 (pandas DataFrame)
@@ -284,16 +344,25 @@ return ([hist_c, hist_o], ["CLEAN", "OUTLIER"], df_results)
 
 ```
 
-# Patch Note
-* 1.0.0 : 최초 릴리즈
-* 1.0.1 : 로그 수정
-* 2.0.0 : 라이브러리 모듈화, 노이즈 추가 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.0)
-* 2.0.1 : 버그 수정
-* 2.0.2 : 버그 수정
-* 2.0.3 : 버그 수정
-* 2.0.4 : 버그 수정 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.4)
-* 2.1.0 : Outliers 모듈 추가 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.0)
-* 2.1.1 : 얕은 복사로 인한 경고 해결 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.1)
-* 2.1.2 : Outlier 메타 추가 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.2)
-* 2.1.3 : init 수정 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.3)
-* 2.1.4 : SCCE 함수 clamp 1로 재정의, 구분을 위해 q_t로 변경 [(패치내역)](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.4)
+---
+
+## 📝 Patch Notes
+- 1.0.0: First release  
+- 1.0.1: 로그 수정  
+- 2.0.0: 라이브러리 모듈화, 노이즈 추가 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.0))  
+- 2.0.1: 버그 수정  
+- 2.0.2: 버그 수정  
+- 2.0.3: 버그 수정  
+- 2.0.4: 버그 수정 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.0.4))  
+- 2.1.0: Outliers 모듈 추가 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.0))  
+- 2.1.1: 얕은 복사로 인한 경고 해결 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.1))  
+- 2.1.2: Outlier 메타 추가 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.2))  
+- 2.1.3: init 수정 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.3))  
+- 2.1.4: SCCE 함수 clamp 1로 재정의, 구분을 위해 q_t로 변경 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.4))  
+- **2.1.5: PyPI 패키징 정리, README 개선, 배포명 `robustloss-lab`, import `robustloss`**
+
+---
+
+## 📎 Links
+- [Latest Release](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.5)  
+- [Homepage / Source](https://github.com/RosePasta22/ML-DL-Seminar)
