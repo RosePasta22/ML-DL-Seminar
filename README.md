@@ -77,34 +77,6 @@ plot_history([hist], ["SCCE"])
 
 ---
 
-## 📖 Data Research Code (Extended Notes)
-
-### Description
-데이터 분석에 필요한 스키마 지정, 전처리, 함수 구현, Outlier 및 Noise 관리, 학습 라이브러리입니다.
-
-### 내부 파일
-1) **데이터 스키마 관리**  
-- `schemas.py`
-
-2) **데이터 전처리 및 split**  
-- `datamod.py`, `preprocess.py`
-
-3) **다양한 loss function 구현**  
-- `loss_functions.py`
-
-4) **logistic/softmax 기반 linear classifier**  
-- `models.py`
-
-5) **label/feature noise 관리**  
-- `noise_types.py`, `apply_noise.py`
-
-6) **Outlier 관리**  
-- `outliers.py`, `apply_outliers.py`
-
-7) **학습 루프, optimizer, early stopping, 시각화**  
-- `train_many.py`
-
----
 
 ## 🧩 API Sketch (요약)
 
@@ -359,7 +331,7 @@ return ([hist_c, hist_o], ["CLEAN", "OUTLIER"], df_results)
 - 2.1.2: Outlier 메타 추가 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.2))  
 - 2.1.3: init 수정 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.3))  
 - 2.1.4: SCCE 함수 clamp 1로 재정의, 구분을 위해 q_t로 변경 ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.4))  
-- **2.1.5: PyPI 패키징 정리, README 개선, 배포명 `robustloss-lab`, import `robustloss`**
+- **2.1.5: PyPI 패키징 정리, README 개선, 배포명 `robustloss-lab`, import `robustloss`** ([패치내역](https://github.com/RosePasta22/ML-DL-Seminar/releases/tag/v2.1.5))
 
 ---
 
