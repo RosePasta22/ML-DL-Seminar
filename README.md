@@ -189,6 +189,11 @@ run_experiment(
     # -------------------------
     noise: Optional[NoiseConfig] = None,        # 노이즈 구성 객체 (label/feature 종류, 비율, 시드 등)
     noise_targets: Iterable[str] = ("train",),  # 노이즈 적용 대상 split ("train","val","test" 중 선택)
+
+    # -------------------------
+    # outlier setting
+    # -------------------------
+    outliers: Optional[OutlierConfig] = None,   # outlier 구성 객체
 ):
 
 return model, hist, dict(test_acc=test_acc, test_f1=test_f1, noise_meta=noise_meta, outlier_meta=outlier_meta)
